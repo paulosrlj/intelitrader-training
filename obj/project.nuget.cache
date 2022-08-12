@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "wDpWAdDjt/fTMjy+eoHuS8ERsk7BQLn4G4YFl+EZXGrAscD/bTrYr/bNI8HX7vY0BKU6FYokLBM4V7rVArwnHA==",
+  "dgSpecHash": "3m+zyQHoZadmbUv6Cfohgwd62Ti5RW4swOJQ3CJGMPvsZ6EVOdV+2dv1rgwDxTve89boihvwBEEnc4lRxn/wUg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Paulo\\Documents\\user-api\\user-api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Paulo\\.nuget\\packages\\automapper\\11.0.1\\automapper.11.0.1.nupkg.sha512",
     "C:\\Users\\Paulo\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
+    "C:\\Users\\Paulo\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\Paulo\\.nuget\\packages\\microsoft.entityframeworkcore\\6.0.8\\microsoft.entityframeworkcore.6.0.8.nupkg.sha512",
     "C:\\Users\\Paulo\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\6.0.8\\microsoft.entityframeworkcore.abstractions.6.0.8.nupkg.sha512",
     "C:\\Users\\Paulo\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\6.0.8\\microsoft.entityframeworkcore.analyzers.6.0.8.nupkg.sha512",

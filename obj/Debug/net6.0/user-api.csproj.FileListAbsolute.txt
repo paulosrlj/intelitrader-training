@@ -33,3 +33,4 @@ C:\Users\Paulo\Documents\user-api\obj\Debug\net6.0\refint\user-api.dll
 C:\Users\Paulo\Documents\user-api\obj\Debug\net6.0\user-api.pdb
 C:\Users\Paulo\Documents\user-api\obj\Debug\net6.0\user-api.genruntimeconfig.cache
 C:\Users\Paulo\Documents\user-api\obj\Debug\net6.0\ref\user-api.dll
+C:\Users\Paulo\Documents\user-api\bin\Debug\net6.0\AutoMapper.dll
