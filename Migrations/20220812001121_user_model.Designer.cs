@@ -11,8 +11,8 @@ using user_api.database;
 namespace user_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220811220519_GetUsers")]
-    partial class GetUsers
+    [Migration("20220812001121_user_model")]
+    partial class user_model
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,6 +24,7 @@ namespace user_api.Migrations
             modelBuilder.Entity("user_api.Models.User", b =>
                 {
                     b.Property<string>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255)");
 
                     b.Property<int>("age")
@@ -41,7 +42,7 @@ namespace user_api.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("GetUsers");
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }

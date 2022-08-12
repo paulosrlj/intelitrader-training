@@ -22,6 +22,7 @@ namespace user_api.Migrations
             modelBuilder.Entity("user_api.Models.User", b =>
                 {
                     b.Property<string>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255)");
 
                     b.Property<int>("age")

@@ -5,12 +5,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace user_api.Migrations
 {
-    public partial class GetUsers : Migration
+    public partial class user_model : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateTable(
-                name: "GetUsers",
+                name: "Users",
                 columns: table => new
                 {
                     id = table.Column<string>(type: "varchar(255)", nullable: false)
@@ -24,7 +27,7 @@ namespace user_api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GetUsers", x => x.id);
+                    table.PrimaryKey("PK_Users", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
         }
@@ -32,7 +35,7 @@ namespace user_api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GetUsers");
+                name: "Users");
         }
     }
 }
