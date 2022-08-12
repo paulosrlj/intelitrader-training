@@ -1,11 +1,8 @@
-using System.ComponentModel.DataAnnotations.Schema;
 namespace user_api.Models;
 
 
 public class User
 {
-
-  [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
   public string id { get; set; }
   public string firstName { get; set; } = string.Empty;
   public string? surname { get; set; } = string.Empty;
@@ -17,4 +14,10 @@ public class User
     this.id = Guid.NewGuid().ToString();
     this.creationDate = DateTime.UtcNow;
   }
+
+  public override string ToString()
+   {
+      return base.ToString() + ": " + firstName.ToString();
+   }
+   
 }

@@ -10,36 +10,50 @@ namespace user_api.Controllers
   public class UsersController : ControllerBase
   {
     private readonly ApplicationDbContext _context;
+    private readonly ILogger _logger;
 
-    public UsersController(ApplicationDbContext context)
+    public UsersController(ApplicationDbContext context, ILogger<User> logger)
     {
       _context = context;
+      _logger = logger;
     }
 
 
     [HttpGet]
     public ActionResult<IEnumerable<User>> GetUsers()
     {
+      _logger.LogInformation("GET /api/users/");
       return _context.Users;
     }
 
     [HttpGet("{id}")]
     public ActionResult<User> GetUser(String id)
     {
+      _logger.LogInformation("GET /api/users/{id}");
+
       var user = _context.Users.Find(id);
 
-      if (user == null) return NotFound();
+      if (user == null)
+      {
+        _logger.LogWarning("User does not exists");
+        return NotFound();
+      }
 
+      // Console.WriteLine(user.ToString());
+      _logger.LogInformation("User found: {user}", user.ToString());
       return user;
     }
 
     // api/users
+    // Colocar informações da chamada
     [HttpPost]
     public ActionResult<User> CreateUser(User user)
     {
+      _logger.LogInformation("POST /api/users/");
       _context.Users.Add(user);
       _context.SaveChanges();
 
+      _logger.LogWarning("User created");
       return CreatedAtAction("GetUser", new User { id = user.id }, user);
     }
 
@@ -47,37 +61,49 @@ namespace user_api.Controllers
     [HttpPut("{id}")]
     public ActionResult<User> UpdateUser(String id, UpdateUserModel updateUserModel)
     {
-      var userFound = _context.Users.Find(id);
-      if (userFound == null) return NotFound();
+      _logger.LogInformation("PUT /api/users/{id}");
 
-      if (updateUserModel.firstName != null) {
+      var userFound = _context.Users.Find(id);
+      if (userFound == null)
+      {
+        _logger.LogWarning("User does not exists");
+        return NotFound();
+      }
+
+      if (updateUserModel.firstName != null)
+      {
         userFound.firstName = updateUserModel.firstName;
       }
 
-      if (updateUserModel.surname != null) {
+      if (updateUserModel.surname != null)
+      {
         userFound.surname = updateUserModel.surname;
       }
 
-      if (updateUserModel.age != null) {
+      if (updateUserModel.age != null)
+      {
         userFound.age = updateUserModel.age.GetValueOrDefault();
       }
 
       _context.Users.Update(userFound);
-
-      // _context.Entry(userFound).State = EntityState.Modified;
       _context.SaveChanges();
 
+      _logger.LogInformation("User successfuly updated");
       return CreatedAtAction("GetUser", new User { id = userFound.id }, userFound);
     }
 
     [HttpDelete("{id}")]
-    public ActionResult<User> DeleteUser(String id) {
+    public ActionResult<User> DeleteUser(String id)
+    {
+      _logger.LogInformation("DELETE /api/users/{id}");
+
       var user = _context.Users.Find(id);
       if (user == null) return NotFound();
 
       _context.Users.Remove(user);
       _context.SaveChanges();
 
+      _logger.LogInformation("User successfuly deleted");
       return NoContent();
     }
   }
