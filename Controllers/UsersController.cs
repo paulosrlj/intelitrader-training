@@ -24,6 +24,9 @@ namespace user_api.Controllers
     {
       _logger.LogInformation("GET /api/users/");
       var users = _context.Users;
+
+      if (users.Count() == 0) return NoContent();
+
       return Ok(users);
     }
 

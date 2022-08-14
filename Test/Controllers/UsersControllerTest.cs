@@ -42,9 +42,7 @@ public class UsersControllerTest : IDisposable
     // Arrange
     _context.Users.AddRange(UserMockData.GetUsers());
     _context.SaveChanges();
-    // var userRepository = new Mock<ApplicationDbContext>();
-    // userRepository.Setup(_ => _.Users).Returns(UserMockData.GetUsers().Object);
-
+  
     var logMock = new Mock<ILogger<User>>();
 
     var sut = new UsersController(_context, logMock.Object);
@@ -57,5 +55,22 @@ public class UsersControllerTest : IDisposable
     result.GetType().Should().Be(typeof(OkObjectResult));
     result.Should().BeOfType<OkObjectResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
+  }
+
+  [Fact]
+  public void MustReturn204IfNoUsersAreFound()
+  {
+    // Arrange
+
+    var logMock = new Mock<ILogger<User>>();
+
+    var sut = new UsersController(_context, logMock.Object);
+
+    // Act
+    var result = sut.GetUsers();
+   
+    // Assert  
+    result.Should().BeOfType<NoContentResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
   }
 }
