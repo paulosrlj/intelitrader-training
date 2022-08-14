@@ -73,4 +73,22 @@ public class UsersControllerTest : IDisposable
     result.Should().BeOfType<NoContentResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
   }
+
+  [Fact]
+  public void MustReturn404IfASingleUserIsNotFound()
+  {
+    // Arrange
+    _context.Users.AddRange(UserMockData.GetUsers());
+    _context.SaveChanges();
+    var logMock = new Mock<ILogger<User>>();
+
+    var sut = new UsersController(_context, logMock.Object);
+
+    // Act
+    var result = sut.GetUser(Guid.NewGuid().ToString()) as NotFoundResult;
+    
+    // Assert  
+    result.Should().BeOfType<NotFoundResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+  }
 }

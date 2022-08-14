@@ -1,6 +1,4 @@
 using user_api.Models;
-using Microsoft.EntityFrameworkCore;
-using Moq;
 namespace Test.MockData;
 
 public class UserMockData
@@ -34,12 +32,6 @@ public class UserMockData
         creationDate = DateTime.Parse("2022-08-12T00:31:11.461767")
       }
   };
-
-    // var mockSet = new Mock<DbSet<User>>();
-    // mockSet.As<IQueryable<User>>().Setup(m => m.Provider).Returns(data.Provider);
-    // mockSet.As<IQueryable<User>>().Setup(m => m.Expression).Returns(data.Expression);
-    // mockSet.As<IQueryable<User>>().Setup(m => m.ElementType).Returns(data.ElementType);
-    // mockSet.As<IQueryable<User>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
 
     return data;
   }

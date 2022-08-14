@@ -31,7 +31,7 @@ namespace user_api.Controllers
     }
 
     [HttpGet("{id}")]
-    public ActionResult<User> GetUser(String id)
+    public IActionResult GetUser(String id)
     {
       _logger.LogInformation("GET /api/users/{id}");
 
@@ -43,9 +43,8 @@ namespace user_api.Controllers
         return NotFound();
       }
 
-      // Console.WriteLine(user.ToString());
       _logger.LogInformation("User found: {user}", user.ToString());
-      return user;
+      return Ok(user);
     }
 
     // api/users
