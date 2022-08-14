@@ -20,10 +20,11 @@ namespace user_api.Controllers
 
 
     [HttpGet]
-    public ActionResult<IEnumerable<User>> GetUsers()
+    public IActionResult GetUsers()
     {
       _logger.LogInformation("GET /api/users/");
-      return _context.Users;
+      var users = _context.Users;
+      return Ok(users);
     }
 
     [HttpGet("{id}")]
