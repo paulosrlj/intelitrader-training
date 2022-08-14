@@ -31,7 +31,8 @@ public class UsersControllerTest : IDisposable
     _context.Database.EnsureCreated();
   }
 
-  public void Dispose() {
+  public void Dispose()
+  {
     _context.Database.EnsureDeleted();
     _context.Dispose();
   }
@@ -42,14 +43,14 @@ public class UsersControllerTest : IDisposable
     // Arrange
     _context.Users.AddRange(UserMockData.GetUsers());
     _context.SaveChanges();
-  
+
     var logMock = new Mock<ILogger<User>>();
 
     var sut = new UsersController(_context, logMock.Object);
 
     // Act
     var result = sut.GetUsers() as OkObjectResult;
-   
+
     // Assert  
     result.Value.Should().BeEquivalentTo(UserMockData.GetUsers());
     result.GetType().Should().Be(typeof(OkObjectResult));
@@ -68,7 +69,7 @@ public class UsersControllerTest : IDisposable
 
     // Act
     var result = sut.GetUsers();
-   
+
     // Assert  
     result.Should().BeOfType<NoContentResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
@@ -86,9 +87,34 @@ public class UsersControllerTest : IDisposable
 
     // Act
     var result = sut.GetUser(Guid.NewGuid().ToString()) as NotFoundResult;
-    
+
     // Assert  
     result.Should().BeOfType<NotFoundResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+  }
+
+  [Fact]
+  public void MustReturn200IfASingleUserIsFound()
+  {
+    // Arrange
+    _context.Users.AddRange(UserMockData.GetUsers());
+    _context.SaveChanges();
+    var logMock = new Mock<ILogger<User>>();
+
+    var sut = new UsersController(_context, logMock.Object);
+
+    // Act
+    var result = sut.GetUser("6db8af3f-f20b-4ade-95f9-245094719c33") as OkObjectResult;
+    
+    // Assert  
+    result.Value.Should().BeEquivalentTo(new User
+    {
+      id = "6db8af3f-f20b-4ade-95f9-245094719c33",
+      firstName = "Lilia",
+      age = 19,
+      creationDate = DateTime.Parse("2022-08-12T00:32:01.355183")
+    });
+    result.Should().BeOfType<OkObjectResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
   }
 }
