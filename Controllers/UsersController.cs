@@ -62,7 +62,7 @@ namespace user_api.Controllers
 
     // api/users/1
     [HttpPut("{id}")]
-    public ActionResult<User> UpdateUser(String id, UpdateUserModel updateUserModel)
+    public IActionResult UpdateUser(String id, UpdateUserModel updateUserModel)
     {
       _logger.LogInformation("PUT /api/users/{id}");
 

@@ -105,7 +105,7 @@ public class UsersControllerTest : IDisposable
 
     // Act
     var result = sut.GetUser("6db8af3f-f20b-4ade-95f9-245094719c33") as OkObjectResult;
-    
+
     // Assert  
     result.Value.Should().BeEquivalentTo(new User
     {
@@ -116,5 +116,35 @@ public class UsersControllerTest : IDisposable
     });
     result.Should().BeOfType<OkObjectResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
+  }
+
+  [Fact]
+  public void MustReturn200IfAUserIsSuccessfulyUpdated()
+  {
+    // Arrange
+    _context.Users.AddRange(UserMockData.GetUsers());
+    _context.SaveChanges();
+    var logMock = new Mock<ILogger<User>>();
+
+    var dataToUpdate = new UpdateUserModel { firstName = "Lillia Santos" };
+    var expectedData = new User
+    {
+      id = "6db8af3f-f20b-4ade-95f9-245094719c33",
+      firstName = "Lillia Santos",
+      age = 19,
+      creationDate = DateTime.Parse("2022-08-12T00:32:01.355183")
+    };
+
+    var sut = new UsersController(_context, logMock.Object);
+
+    // Act
+    var result = sut.UpdateUser("6db8af3f-f20b-4ade-95f9-245094719c33", dataToUpdate) 
+    as CreatedAtActionResult;
+    
+    // Assert  
+    result.Value.Should().BeEquivalentTo(expectedData);
+
+    result.Should().BeOfType<CreatedAtActionResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
   }
 }
