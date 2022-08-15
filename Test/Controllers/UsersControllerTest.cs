@@ -138,9 +138,9 @@ public class UsersControllerTest : IDisposable
     var sut = new UsersController(_context, logMock.Object);
 
     // Act
-    var result = sut.UpdateUser("6db8af3f-f20b-4ade-95f9-245094719c33", dataToUpdate) 
+    var result = sut.UpdateUser("6db8af3f-f20b-4ade-95f9-245094719c33", dataToUpdate)
     as CreatedAtActionResult;
-    
+
     // Assert  
     result.Value.Should().BeEquivalentTo(expectedData);
 
@@ -168,11 +168,42 @@ public class UsersControllerTest : IDisposable
     var sut = new UsersController(_context, logMock.Object);
 
     // Act
-    var result = sut.UpdateUser("6db8af3f-f20b-4ade-95f9-125769122", dataToUpdate) 
+    var result = sut.UpdateUser("6db8af3f-f20b-4ade-95f9-125769122", dataToUpdate)
     as NotFoundResult;
-    
+
     // Assert  
     result.Should().BeOfType<NotFoundResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+  }
+
+  [Fact]
+  public void MustReturn200IfAUserIsSuccessfulyCreated()
+  {
+    // Arrange
+    var logMock = new Mock<ILogger<User>>();
+
+    var dataToCreate = new User
+    {
+      firstName = "Lillia Santos",
+      age = 19,
+    };
+
+    var expectedData = new User
+    {
+      id = dataToCreate.id,
+      firstName = "Lillia Santos",
+      age = 19,
+      creationDate = dataToCreate.creationDate
+    };
+
+    var sut = new UsersController(_context, logMock.Object);
+
+    // Act
+    var result = sut.CreateUser(dataToCreate) as CreatedAtActionResult;
+
+    // Assert  
+    result.Value.Should().BeEquivalentTo(expectedData);
+    result.Should().BeOfType<CreatedAtActionResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
   }
 }

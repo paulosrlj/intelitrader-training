@@ -50,7 +50,7 @@ namespace user_api.Controllers
     // api/users
     // Colocar informações da chamada
     [HttpPost]
-    public ActionResult<User> CreateUser(User user)
+    public IActionResult CreateUser(User user)
     {
       _logger.LogInformation("POST /api/users/");
       _context.Users.Add(user);
