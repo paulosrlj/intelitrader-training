@@ -13,8 +13,6 @@ using Test.MockData;
 
 namespace Test.Controllers;
 
-
-
 public class UsersControllerTest : IDisposable
 {
 

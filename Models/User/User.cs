@@ -16,14 +16,16 @@ public class User
   public DateTime creationDate { get; set; }
 
 
-  public User() {
+  public User()
+  {
     this.id = Guid.NewGuid().ToString();
     this.creationDate = DateTime.UtcNow;
   }
 
   public override string ToString()
-   {
-      return base.ToString() + ": " + firstName.ToString();
-   }
-   
+  {
+    return String.Format("User: \n[id: {0}\nfirstName: {1}\nsurname: {2}\nage: {3}\ncreationDate:{4}\n]",
+    id, firstName, surname, age, creationDate);
+  }
+
 }
