@@ -224,4 +224,22 @@ public class UsersControllerTest : IDisposable
     result.Should().BeOfType<NoContentResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
   }
+
+  [Fact]
+  public void MustReturn404IfUserIsNotFoundOnDelete()
+  {
+    // Arrange
+    _context.Users.AddRange(UserMockData.GetUsers());
+    _context.SaveChanges();
+    var logMock = new Mock<ILogger<User>>();
+
+    var sut = new UsersController(_context, logMock.Object);
+
+    // Act
+    var result = sut.DeleteUser("6db8af3f-f20b-4ade-95f9-7256262633") as NotFoundResult;
+    
+    // Assert  
+    result.Should().BeOfType<NotFoundResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+  }
 }
