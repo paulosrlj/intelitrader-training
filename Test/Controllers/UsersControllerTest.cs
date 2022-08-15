@@ -147,4 +147,32 @@ public class UsersControllerTest : IDisposable
     result.Should().BeOfType<CreatedAtActionResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
   }
+
+  [Fact]
+  public void MustReturn404IfAUserIsNotFoundOnUpdate()
+  {
+    // Arrange
+    _context.Users.AddRange(UserMockData.GetUsers());
+    _context.SaveChanges();
+    var logMock = new Mock<ILogger<User>>();
+
+    var dataToUpdate = new UpdateUserModel { firstName = "Lillia Santos" };
+    var expectedData = new User
+    {
+      id = "6db8af3f-f20b-4ade-95f9-245094719c33",
+      firstName = "Lillia Santos",
+      age = 19,
+      creationDate = DateTime.Parse("2022-08-12T00:32:01.355183")
+    };
+
+    var sut = new UsersController(_context, logMock.Object);
+
+    // Act
+    var result = sut.UpdateUser("6db8af3f-f20b-4ade-95f9-125769122", dataToUpdate) 
+    as NotFoundResult;
+    
+    // Assert  
+    result.Should().BeOfType<NotFoundResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+  }
 }
