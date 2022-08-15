@@ -53,6 +53,7 @@ namespace user_api.Controllers
     public IActionResult CreateUser(User user)
     {
       _logger.LogInformation("POST /api/users/");
+
       _context.Users.Add(user);
       _context.SaveChanges();
 
@@ -96,7 +97,7 @@ namespace user_api.Controllers
     }
 
     [HttpDelete("{id}")]
-    public ActionResult<User> DeleteUser(String id)
+    public IActionResult DeleteUser(String id)
     {
       _logger.LogInformation("DELETE /api/users/{id}");
 

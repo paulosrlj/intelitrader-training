@@ -119,7 +119,7 @@ public class UsersControllerTest : IDisposable
   }
 
   [Fact]
-  public void MustReturn200IfAUserIsSuccessfulyUpdated()
+  public void MustReturn200IfAUserIsSuccessfullyUpdated()
   {
     // Arrange
     _context.Users.AddRange(UserMockData.GetUsers());
@@ -177,7 +177,7 @@ public class UsersControllerTest : IDisposable
   }
 
   [Fact]
-  public void MustReturn200IfAUserIsSuccessfulyCreated()
+  public void MustReturn200IfAUserIsSuccessfullyCreated()
   {
     // Arrange
     var logMock = new Mock<ILogger<User>>();
@@ -205,5 +205,23 @@ public class UsersControllerTest : IDisposable
     result.Value.Should().BeEquivalentTo(expectedData);
     result.Should().BeOfType<CreatedAtActionResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
+  }
+
+  [Fact]
+  public void MustReturn204IfUserIsSuccessfullyDeleted()
+  {
+    // Arrange
+    _context.Users.AddRange(UserMockData.GetUsers());
+    _context.SaveChanges();
+    var logMock = new Mock<ILogger<User>>();
+
+    var sut = new UsersController(_context, logMock.Object);
+
+    // Act
+    var result = sut.DeleteUser("6db8af3f-f20b-4ade-95f9-245094719c33") as NoContentResult;
+    
+    // Assert  
+    result.Should().BeOfType<NoContentResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
   }
 }
