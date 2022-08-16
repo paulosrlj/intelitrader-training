@@ -1,9 +1,31 @@
-version: '3.1'
+version: '3.4'
+
+volumes:
+  datafiles:
 
 services:
-  mysql-docker:
-    image: mysql
+  database:
+    image: mysql:8.0.30
     ports:
       - "3306:3306"
-    environment:
+    volumes:
+      - datafiles:/var/lib/mysql
+    restart: always
+    environment: 
       MYSQL_ROOT_PASSWORD: 123
+      MYSQL_USER: paulo
+      MYSQL_PASSWORD: 123
+      MYSQL_DATABASE: user-api-db
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on: 
+      - database
+    ports:
+      - "5000:80"
+    restart: always
+    environment: 
+      - DBHOST=database
+      - ASPNETCORE_ENVIRONMENT=Development
