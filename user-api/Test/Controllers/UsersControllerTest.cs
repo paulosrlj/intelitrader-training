@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using user_api.Services;
 using user_api.Controllers;
 using user_api.Models;
 using user_api.database;
@@ -13,7 +14,7 @@ using Test.MockData;
 
 namespace Test.Controllers;
 
-public class UsersControllerTest : IDisposable
+public class UsersControllerTest
 {
 
   private readonly ApplicationDbContext _context;
@@ -43,8 +44,10 @@ public class UsersControllerTest : IDisposable
     _context.SaveChanges();
 
     var logMock = new Mock<ILogger<User>>();
+    var serviceMock = new Mock<IUserService<User>>();
+    serviceMock.Setup(s => s.GetAll()).Returns(UserMockData.GetUsers());
 
-    var sut = new UsersController(_context, logMock.Object);
+    var sut = new UsersController(logMock.Object, serviceMock.Object);
 
     // Act
     var result = sut.GetUsers() as OkObjectResult;
@@ -62,8 +65,10 @@ public class UsersControllerTest : IDisposable
     // Arrange
 
     var logMock = new Mock<ILogger<User>>();
+    var serviceMock = new Mock<IUserService<User>>();
+    serviceMock.Setup(s => s.GetAll()).Returns(new List<User>());
 
-    var sut = new UsersController(_context, logMock.Object);
+    var sut = new UsersController(logMock.Object, serviceMock.Object);
 
     // Act
     var result = sut.GetUsers();
@@ -79,9 +84,12 @@ public class UsersControllerTest : IDisposable
     // Arrange
     _context.Users.AddRange(UserMockData.GetUsers());
     _context.SaveChanges();
-    var logMock = new Mock<ILogger<User>>();
 
-    var sut = new UsersController(_context, logMock.Object);
+    var logMock = new Mock<ILogger<User>>();
+    var serviceMock = new Mock<IUserService<User>>();
+    serviceMock.Setup(s => s.GetById(It.IsAny<String>())).Returns<User>(null);
+
+    var sut = new UsersController(logMock.Object, serviceMock.Object);
 
     // Act
     var result = sut.GetUser(Guid.NewGuid().ToString()) as NotFoundResult;
@@ -97,21 +105,26 @@ public class UsersControllerTest : IDisposable
     // Arrange
     _context.Users.AddRange(UserMockData.GetUsers());
     _context.SaveChanges();
+
     var logMock = new Mock<ILogger<User>>();
-
-    var sut = new UsersController(_context, logMock.Object);
-
-    // Act
-    var result = sut.GetUser("6db8af3f-f20b-4ade-95f9-245094719c33") as OkObjectResult;
-
-    // Assert  
-    result.Value.Should().BeEquivalentTo(new User
+    var serviceMock = new Mock<IUserService<User>>();
+    var user = new User
     {
       id = "6db8af3f-f20b-4ade-95f9-245094719c33",
       firstName = "Lilia",
       age = 19,
       creationDate = DateTime.Parse("2022-08-12T00:32:01.355183")
-    });
+    };
+
+    serviceMock.Setup(s => s.GetById(It.IsAny<String>())).Returns(user);
+
+    var sut = new UsersController(logMock.Object, serviceMock.Object);
+
+    // Act
+    var result = sut.GetUser("6db8af3f-f20b-4ade-95f9-245094719c33") as OkObjectResult;
+
+    // Assert  
+    result.Value.Should().BeEquivalentTo(user);
     result.Should().BeOfType<OkObjectResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.OK);
   }
@@ -123,6 +136,7 @@ public class UsersControllerTest : IDisposable
     _context.Users.AddRange(UserMockData.GetUsers());
     _context.SaveChanges();
     var logMock = new Mock<ILogger<User>>();
+    var serviceMock = new Mock<IUserService<User>>();
 
     var dataToUpdate = new UpdateUserModel { firstName = "Lillia Santos" };
     var expectedData = new User
@@ -133,17 +147,17 @@ public class UsersControllerTest : IDisposable
       creationDate = DateTime.Parse("2022-08-12T00:32:01.355183")
     };
 
-    var sut = new UsersController(_context, logMock.Object);
+    var sut = new UsersController(logMock.Object, serviceMock.Object);
 
     // Act
     var result = sut.UpdateUser("6db8af3f-f20b-4ade-95f9-245094719c33", dataToUpdate)
-    as CreatedAtActionResult;
+    as NoContentResult;
 
     // Assert  
-    result.Value.Should().BeEquivalentTo(expectedData);
+    result.Should().BeOfType<NoContentResult>();
 
-    result.Should().BeOfType<CreatedAtActionResult>()
-    .Which.StatusCode.Should().Be((int)HttpStatusCode.Created);
+    result.Should().BeOfType<NoContentResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
   }
 
   [Fact]
@@ -153,6 +167,7 @@ public class UsersControllerTest : IDisposable
     _context.Users.AddRange(UserMockData.GetUsers());
     _context.SaveChanges();
     var logMock = new Mock<ILogger<User>>();
+    var serviceMock = new Mock<IUserService<User>>();
 
     var dataToUpdate = new UpdateUserModel { firstName = "Lillia Santos" };
     var expectedData = new User
@@ -163,15 +178,14 @@ public class UsersControllerTest : IDisposable
       creationDate = DateTime.Parse("2022-08-12T00:32:01.355183")
     };
 
-    var sut = new UsersController(_context, logMock.Object);
-
+    var sut = new UsersController(logMock.Object, serviceMock.Object);
     // Act
     var result = sut.UpdateUser("6db8af3f-f20b-4ade-95f9-125769122", dataToUpdate)
-    as NotFoundResult;
+    as NoContentResult;
 
     // Assert  
-    result.Should().BeOfType<NotFoundResult>()
-    .Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+    result.Should().BeOfType<NoContentResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
   }
 
   [Fact]
@@ -179,7 +193,7 @@ public class UsersControllerTest : IDisposable
   {
     // Arrange
     var logMock = new Mock<ILogger<User>>();
-
+    var serviceMock = new Mock<IUserService<User>>();
     var dataToCreate = new User
     {
       firstName = "Lillia Santos",
@@ -194,7 +208,7 @@ public class UsersControllerTest : IDisposable
       creationDate = dataToCreate.creationDate
     };
 
-    var sut = new UsersController(_context, logMock.Object);
+    var sut = new UsersController(logMock.Object, serviceMock.Object);
 
     // Act
     var result = sut.CreateUser(dataToCreate) as CreatedAtActionResult;
@@ -212,12 +226,12 @@ public class UsersControllerTest : IDisposable
     _context.Users.AddRange(UserMockData.GetUsers());
     _context.SaveChanges();
     var logMock = new Mock<ILogger<User>>();
-
-    var sut = new UsersController(_context, logMock.Object);
+    var serviceMock = new Mock<IUserService<User>>();
+    var sut = new UsersController(logMock.Object, serviceMock.Object);
 
     // Act
     var result = sut.DeleteUser("6db8af3f-f20b-4ade-95f9-245094719c33") as NoContentResult;
-    
+
     // Assert  
     result.Should().BeOfType<NoContentResult>()
     .Which.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
@@ -231,13 +245,14 @@ public class UsersControllerTest : IDisposable
     _context.SaveChanges();
     var logMock = new Mock<ILogger<User>>();
 
-    var sut = new UsersController(_context, logMock.Object);
+    var serviceMock = new Mock<IUserService<User>>();
+    var sut = new UsersController(logMock.Object, serviceMock.Object);
 
     // Act
-    var result = sut.DeleteUser("6db8af3f-f20b-4ade-95f9-7256262633") as NotFoundResult;
-    
+    var result = sut.DeleteUser("6db8af3f-f20b-4ade-95f9-7256262633") as NoContentResult;
+
     // Assert  
-    result.Should().BeOfType<NotFoundResult>()
-    .Which.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+    result.Should().BeOfType<NoContentResult>()
+    .Which.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
   }
 }
